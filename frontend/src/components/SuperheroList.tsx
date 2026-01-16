@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { type Superhero } from "../api/superheroesApi";
-import { useHeroes } from "../hooks/useHeroes";
 import CreateEditHero from "./CreateEditHero";
 
-const SuperheroCard = () => {
-  const { heroes, loading, deleteHero } = useHeroes();
+interface SuperheroListProps {
+  heroes: Superhero[];
+  deleteHero: (id: string) => Promise<void>;
+  onHeroUpdated: () => Promise<void>;
+}
+
+const SuperheroCard = ({
+  heroes,
+  deleteHero,
+  onHeroUpdated,
+}: SuperheroListProps) => {
   const [editingHero, setEditingHero] = useState<Superhero | null>(null);
   const navigate = useNavigate();
-
-  if (loading) {
-    return (
-      <p className="text-center text-lg font-semibold text-gray-500">
-        Loading...
-      </p>
-    );
-  }
+  const handleSave = async () => {
+    await onHeroUpdated();
+    setEditingHero(null);
+  };
 
   return (
     <div className="flex flex-col items-center p-8 gap-8 w-full ">
@@ -28,7 +32,7 @@ const SuperheroCard = () => {
             <div className="aspect-[3/4] w-full">
               <img
                 className="w-full h-full object-cover rounded-t-2xl"
-                src={hero.images[0]}
+                src={hero.images?.[0]}
                 alt={hero.nickname}
               />
             </div>
@@ -61,14 +65,12 @@ const SuperheroCard = () => {
           </div>
         ))}
       </div>
-
-      {editingHero && (
-        <CreateEditHero
-          isOpen={!!editingHero}
-          onClose={() => setEditingHero(null)}
-          heroToEdit={editingHero}
-        />
-      )}
+      <CreateEditHero
+        isOpen={!!editingHero}
+        onClose={() => setEditingHero(null)}
+        heroToEdit={editingHero}
+        onSave={handleSave}
+      />
     </div>
   );
 };
