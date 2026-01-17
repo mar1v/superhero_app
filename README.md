@@ -131,7 +131,6 @@ superhero_app/
 
 ## 💡 Key Architecture Decisions
 
-- **No Context API**: Frontend uses `useState` for simpler state management
 - **Functional Approach**: No classes - only functions in backend
 - **Zod Validation**: Type-safe schema validation
 - **AppError Class**: Consistent error handling with status codes
